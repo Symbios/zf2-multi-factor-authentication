@@ -73,6 +73,7 @@ class Authenticator
      *
      * @param string  $username Client username
      * @param integer $size     QRCode image size in pixels
+     * @param string  $issuer   Name of issuer
      * @return string
      */
     public function getQRCodeUrl($username, $size = 200, $issuer = 'Codific')
