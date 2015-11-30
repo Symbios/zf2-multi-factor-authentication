@@ -26,6 +26,7 @@ The authenticated users should have 2 additional attributes in the database.
 ```
 
 Upon a successful login redirect the authenticated user to the mfa screen. Here is a sample action for the MFA.
+Note that we save the authenticated user in a cache variable and we clear the authentication storage before redirecting. After a successful MFA we restore the storage from the cache.
 ```php
     /**
      * Check multi-factor authentication after a successful login.
@@ -34,14 +35,14 @@ Upon a successful login redirect the authenticated user to the mfa screen. Here 
      */
     public function checkmfaAction()
     {
-        $data = $this->cache->admin;
+        $data = $this->cache->authenticatedUser;
         $request = $this->getRequest();
         if($request->isPost()) {
             $postData = $request->getPost();
             $googleAuth = new \Codific\Authenticator($data->secretKey);
             if($googleAuth->verifyCode($postData->pin, 4)) //the second parameter specifies the validity of the MFA token in minutes
             {
-                $this->cache->verifyMFA = 1;
+                $this->cache->authenticatedUser->verifyMFA = 1;
                 $auth = new AuthenticationService();
                 $auth->getStorage()->write($data);
                 return $this->redirect()->toUrl("/admin/index/index");
