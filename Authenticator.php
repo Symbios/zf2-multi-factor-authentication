@@ -89,7 +89,7 @@ class Authenticator
      * @param integer $timeSlice On that sliced time will provide new code ( default = 30sec ).
      * @return string
      */
-    private function getCode($timeSlice = null)
+    public function getCode($timeSlice = null)
     {
         $secretKey = $this->base32Decode($this->secretKey);
         if($timeSlice === null) $timeSlice = $this->getTimeIndex();
