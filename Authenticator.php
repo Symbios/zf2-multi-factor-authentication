@@ -1,8 +1,8 @@
 <?php
 /**
- * Authenticator 
+ * Authenticator
  * 2-factory verification
- * 
+ *
  * PHP version 5
  *
  * @author Nikolay Dyakov < nikolay@codific.eu >
@@ -10,6 +10,8 @@
  * @formatter:off Prevent eclipse to auto format that file. Require by Nikolay Dyakov
  */
 namespace Codific;
+
+use  Endroid\QrCode\QrCode;
 
 /**
  * Authenticator
@@ -20,16 +22,15 @@ namespace Codific;
  */
 class Authenticator
 {
-    const API_URL = 'https://chart.googleapis.com/chart?chs={chs}&chld=M|0&cht=qr&chl={chl}';
     const CODE_LENGTH = 6;
     const SECRET_KEY_LENGTH = 16;
-    
+
     /**
      * Store user secret key
      * @var string $secretKey
      */
     private $secretKey;
-    
+
     /**
      * Base 32 alphabet
      * https://en.wikipedia.org/wiki/Base32#RFC_4648_Base32_alphabet
@@ -79,8 +80,10 @@ class Authenticator
     public function getQRCodeUrl($username, $size = 200, $issuer = 'Codific')
     {
         $params = array('secret' => $this->getSecretKey(), 'issuer' => $issuer);
-        return str_replace(array('{chs}','{chl}'), 
-                array($size . 'x' . $size,urlencode('otpauth://totp/' . $username . '?' . http_build_query($params))), static::API_URL);
+        $url = 'otpauth://totp/' . $username . '?' . http_build_query($params);
+        $qrCode = new QrCode($url);
+        $qrCode->setSize($size);
+        return $qrCode->writeDataUri();
     }
 
     /**
