@@ -18,7 +18,8 @@
         }
     ],
     "require": {
-        "php": ">=5.3.0"
+        "php": ">=5.3.0",
+        "endroid/qr-code": "3.*"
     },
     "autoload": {
         "psr-4": {
